@@ -516,7 +516,238 @@ function Dashboard() {
         </div>
 
       </div>
+       
+    {/* =====================================================
+    PRODUCTION INTELLIGENCE
+    ===================================================== */}
 
+<div className="dashboard-card production-intelligence-card">
+
+  <div className="card-heading">
+
+    <div>
+      <h2>Production Intelligence</h2>
+
+      <p>
+        Production performance and operational efficiency
+      </p>
+    </div>
+
+    <Package size={21} />
+
+  </div>
+
+
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns:
+        "repeat(auto-fit, minmax(170px, 1fr))",
+      gap: "14px",
+      padding: "20px 24px 24px",
+    }}
+  >
+
+    {/* COMPLETED */}
+
+    <div
+      style={{
+        padding: "16px",
+        borderRadius: "13px",
+        background: "#f0fdf4",
+      }}
+    >
+      <small style={{ color: "#15803d" }}>
+        Completed
+      </small>
+
+      <strong
+        style={{
+          display: "block",
+          marginTop: "7px",
+          color: "#166534",
+          fontSize: "22px",
+        }}
+      >
+        {formatNumber(
+          dashboard?.completed_production_count
+        )}
+      </strong>
+    </div>
+
+
+    {/* PENDING */}
+
+    <div
+      style={{
+        padding: "16px",
+        borderRadius: "13px",
+        background: "#fffbeb",
+      }}
+    >
+      <small style={{ color: "#b45309" }}>
+        Pending
+      </small>
+
+      <strong
+        style={{
+          display: "block",
+          marginTop: "7px",
+          color: "#92400e",
+          fontSize: "22px",
+        }}
+      >
+        {formatNumber(
+          dashboard?.pending_production_count
+        )}
+      </strong>
+    </div>
+
+
+    {/* CANCELLED */}
+
+    <div
+      style={{
+        padding: "16px",
+        borderRadius: "13px",
+        background: "#fef2f2",
+      }}
+    >
+      <small style={{ color: "#b91c1c" }}>
+        Cancelled
+      </small>
+
+      <strong
+        style={{
+          display: "block",
+          marginTop: "7px",
+          color: "#991b1b",
+          fontSize: "22px",
+        }}
+      >
+        {formatNumber(
+          dashboard?.cancelled_production_count
+        )}
+      </strong>
+    </div>
+
+
+    {/* TOTAL INPUT */}
+
+    <div
+      style={{
+        padding: "16px",
+        borderRadius: "13px",
+        background: "#eff6ff",
+      }}
+    >
+      <small style={{ color: "#2563eb" }}>
+        Total Input
+      </small>
+
+      <strong
+        style={{
+          display: "block",
+          marginTop: "7px",
+          color: "#1d4ed8",
+          fontSize: "18px",
+        }}
+      >
+        {formatNumber(
+          dashboard?.total_production_input
+        )} kg
+      </strong>
+    </div>
+
+
+    {/* TOTAL OUTPUT */}
+
+    <div
+      style={{
+        padding: "16px",
+        borderRadius: "13px",
+        background: "#eef2ff",
+      }}
+    >
+      <small style={{ color: "#4f46e5" }}>
+        Total Output
+      </small>
+
+      <strong
+        style={{
+          display: "block",
+          marginTop: "7px",
+          color: "#4338ca",
+          fontSize: "18px",
+        }}
+      >
+        {formatNumber(
+          dashboard?.total_production_output
+        )} kg
+      </strong>
+    </div>
+
+
+    {/* TOTAL WASTE */}
+
+    <div
+      style={{
+        padding: "16px",
+        borderRadius: "13px",
+        background: "#fff7ed",
+      }}
+    >
+      <small style={{ color: "#c2410c" }}>
+        Total Waste
+      </small>
+
+      <strong
+        style={{
+          display: "block",
+          marginTop: "7px",
+          color: "#9a3412",
+          fontSize: "18px",
+        }}
+      >
+        {formatNumber(
+          dashboard?.total_production_waste
+        )} kg
+      </strong>
+    </div>
+
+
+    {/* AVERAGE YIELD */}
+
+    <div
+      style={{
+        padding: "16px",
+        borderRadius: "13px",
+        background: "#f5f3ff",
+      }}
+    >
+      <small style={{ color: "#7c3aed" }}>
+        Average Yield
+      </small>
+
+      <strong
+        style={{
+          display: "block",
+          marginTop: "7px",
+          color: "#6d28d9",
+          fontSize: "22px",
+        }}
+      >
+        {(
+          Number(
+            dashboard?.average_production_yield || 0
+          ) * 100
+        ).toFixed(2)}%
+      </strong>
+    </div>
+
+  </div>
+
+</div>
 
       {/* =====================================================
           FACTORY SUMMARY

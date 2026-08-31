@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from google import genai
+from app.models.supplier import Supplier
+from app.models.material import Material
 from typing import Dict
 from dotenv import load_dotenv
 from sqlalchemy import func
@@ -734,6 +736,175 @@ def ai_chat(
     return {
         "reply": reply
     }
+
+
+# ============================================================
+# CREATE PURCHASE ACTION
+# ============================================================
+
+def create_purchase_action(
+    db: Session,
+    supplier_name: str,
+    material_name: str,
+    quantity: int,
+    purchase_rate: float | None,
+    transport_cost: float = 0,
+    notes: str | None = None
+):
+
+    # --------------------------------------------------------
+    # FIND SUPPLIER
+    # --------------------------------------------------------
+
+    supplier = db.query(Supplier).filter(
+        func.lower(Supplier.name) == supplier_name.strip().lower()
+    ).first()
+
+    if not supplier:
+        return {
+            "success": False,
+            "message": f"Supplier '{supplier_name}' database میں موجود نہیں ہے۔"
+        }
+
+    # --------------------------------------------------------
+    # FIND MATERIAL
+    # --------------------------------------------------------
+
+    material = db.query(Material).filter(
+        func.lower(Material.name) == material_name.strip().lower()
+    ).first()
+
+    if not material:
+        return {
+            "success": False,
+            "message": f"Material '{material_name}' database میں موجود نہیں ہے۔"
+        }
+
+    # --------------------------------------------------------
+    # PURCHASE RATE
+    # --------------------------------------------------------
+
+    if purchase_rate is None:
+        return {
+            "success": False,
+            "status": "waiting_for_purchase_rate",
+            "message": "Purchase rate فراہم کریں۔"
+        }
+
+    purchase_rate = float(purchase_rate)
+    transport_cost = float(transport_cost or 0)
+
+    if purchase_rate < 0:
+        return {
+            "success": False,
+            "message": "Purchase rate درست درج کریں۔"
+        }
+
+    if transport_cost < 0:
+        return {
+            "success": False,
+            "message": "Transport cost درست درج کریں۔"
+        }
+
+    # --------------------------------------------------------
+    # CALCULATE TOTAL
+    # --------------------------------------------------------
+
+    total_amount = (
+        quantity * purchase_rate
+    ) + transport_cost
+
+    # --------------------------------------------------------
+    # CREATE PURCHASE
+    # --------------------------------------------------------
+
+    purchase = Purchase(
+        supplier_id=supplier.id,
+        material_id=material.id,
+        quantity=quantity,
+        purchase_rate=purchase_rate,
+        transport_cost=transport_cost,
+        total_amount=total_amount,
+        payment_status="Pending",
+        status="Pending",
+        availability_status="Available",
+        notes=notes
+    )
+
+    db.add(purchase)
+    db.commit()
+    db.refresh(purchase)
+
+    # --------------------------------------------------------
+    # UPDATE INVENTORY
+    # --------------------------------------------------------
+
+    inventory = db.query(Inventory).filter(
+        Inventory.material_id == material.id
+    ).first()
+
+    if inventory:
+
+        old_quantity = float(
+            inventory.quantity or 0
+        )
+
+        old_rate = float(
+            inventory.average_rate or 0
+        )
+
+        new_quantity = old_quantity + quantity
+
+        if new_quantity > 0:
+
+            inventory.average_rate = (
+                (
+                    old_quantity * old_rate
+                ) + (
+                    quantity * purchase_rate
+                )
+            ) / new_quantity
+
+        inventory.quantity = new_quantity
+
+    else:
+
+        inventory = Inventory(
+            material_id=material.id,
+            quantity=quantity,
+            average_rate=purchase_rate
+        )
+
+        db.add(inventory)
+
+    db.commit()
+    db.refresh(inventory)
+
+    # --------------------------------------------------------
+    # RESPONSE
+    # --------------------------------------------------------
+
+    return {
+        "success": True,
+        "message": "AI purchase successfully created.",
+        "purchase": {
+            "id": purchase.id,
+            "supplier_id": purchase.supplier_id,
+            "material_id": purchase.material_id,
+            "quantity": purchase.quantity,
+            "purchase_rate": purchase.purchase_rate,
+            "transport_cost": purchase.transport_cost,
+            "total_amount": purchase.total_amount,
+            "payment_status": purchase.payment_status,
+            "status": purchase.status
+        },
+        "inventory": {
+            "material_id": inventory.material_id,
+            "quantity": inventory.quantity,
+            "average_rate": inventory.average_rate
+        }
+    }
+
 
 
 # ============================================================

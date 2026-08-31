@@ -193,11 +193,87 @@ def get_dashboard(
     ).filter(
         Production.status == "Completed"
     ).scalar()
+    
+    # =========================================================
+    # 13. PRODUCTION INTELLIGENCE
+    # =========================================================
+
+    # Completed production count
+    completed_production_count = db.query(
+        func.count(Production.id)
+    ).filter(
+        Production.status == "Completed"
+    ).scalar()
 
 
-    # =========================================================
-    # 13. NET PROFIT
-    # =========================================================
+    # Pending production count
+    pending_production_count = db.query(
+        func.count(Production.id)
+    ).filter(
+        Production.status == "Pending"
+    ).scalar()
+
+
+    # Cancelled production count
+    cancelled_production_count = db.query(
+        func.count(Production.id)
+    ).filter(
+        Production.status == "Cancelled"
+    ).scalar()
+
+
+    # Total input quantity
+    total_production_input = db.query(
+        func.coalesce(
+            func.sum(Production.input_quantity),
+            0
+        )
+    ).filter(
+        Production.status == "Completed"
+    ).scalar()
+
+
+    # Total output quantity
+    total_production_output = db.query(
+        func.coalesce(
+            func.sum(Production.output_quantity),
+            0
+        )
+    ).filter(
+        Production.status == "Completed"
+    ).scalar()
+
+
+    # Total waste quantity
+    total_production_waste = db.query(
+        func.coalesce(
+            func.sum(Production.waste_quantity),
+            0
+        )
+    ).filter(
+        Production.status == "Completed"
+    ).scalar()
+
+
+    # Average production yield
+    total_input = float(
+        total_production_input or 0
+    )
+
+    total_output = float(
+        total_production_output or 0
+    )
+
+    average_production_yield = (
+        total_output / total_input
+        if total_input > 0
+        else 0
+    )
+
+
+# =========================================================
+# NET PROFIT
+# =========================================================
 
     net_profit = (
         gross_profit
@@ -205,9 +281,9 @@ def get_dashboard(
     )
 
 
-    # =========================================================
-    # 14. RESPONSE
-    # =========================================================
+# =========================================================
+# 14. RESPONSE
+# =========================================================
 
     return {
         "total_purchases": round(
@@ -270,5 +346,38 @@ def get_dashboard(
         "net_profit": round(
             net_profit,
             2
-        )
-    }
+        ),
+
+    # =====================================================
+    # PRODUCTION INTELLIGENCE
+    # =====================================================
+
+    "completed_production_count": int(
+        completed_production_count or 0
+    ),
+
+    "pending_production_count": int(
+        pending_production_count or 0
+    ),
+
+    "cancelled_production_count": int(
+        cancelled_production_count or 0
+    ),
+
+    "total_production_input": int(
+        total_production_input or 0
+    ),
+
+    "total_production_output": int(
+        total_production_output or 0
+    ),
+
+    "total_production_waste": int(
+        total_production_waste or 0
+    ),
+
+    "average_production_yield": round(
+        average_production_yield,
+        4
+    )
+}

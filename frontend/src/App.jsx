@@ -14,6 +14,7 @@ import Dashboard from "./pages/Dashboard";
 import Sales from "./pages/Sales";
 import Purchases from "./pages/Purchases";
 import Stock from "./pages/Stock";
+import Production from "./pages/Production";
 import Suppliers from "./pages/Suppliers";
 import Buyers from "./pages/Buyers";
 import Receivables from "./pages/Receivables";
@@ -21,6 +22,7 @@ import Payables from "./pages/Payables";
 import Reports from "./pages/Reports";
 import AIChat from "./pages/AIChat";
 import Settings from "./pages/Settings";
+
 
 
 function ProtectedLayout({ children }) {
@@ -145,6 +147,20 @@ function App() {
 
 
         {/* =====================================================
+            PRODUCTION
+        ====================================================== */}
+
+        <Route
+          path="/production"
+          element={
+            <ProtectedRoute>
+              <Production />
+            </ProtectedRoute>
+          }
+        />
+
+
+        {/* =====================================================
             STOCK
         ====================================================== */}
 
@@ -153,6 +169,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Stock />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/production"
+          element={
+            <ProtectedRoute>
+              <Production />
             </ProtectedRoute>
           }
         />
@@ -241,14 +266,20 @@ function App() {
           }
         />
 
+
+        {/* =====================================================
+            SETTINGS
+        ====================================================== */}
+
         <Route
-        path="/settings"
-        element={
-          <ProtectedRoute>
-          <Settings />
-        </ProtectedRoute>
-     }
-   />
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+
 
         {/* =====================================================
             DEFAULT
@@ -277,5 +308,6 @@ function App() {
     </BrowserRouter>
   );
 }
+
 
 export default App;

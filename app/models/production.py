@@ -41,6 +41,24 @@ class Production(Base):
         default=0
     )
 
+    ml_predicted_yield_rate = Column(
+        "predicted_yield_rate",
+        Numeric,
+        nullable=True
+    )
+
+    ml_predicted_output_quantity = Column(
+        "predicted_output_quantity",
+        Numeric,
+        nullable=True
+    )
+
+    ml_predicted_waste_quantity = Column(
+        "predicted_waste_quantity",
+        Numeric,
+        nullable=True
+    )
+
     status = Column(
         String,
         nullable=False,

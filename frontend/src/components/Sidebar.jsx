@@ -12,6 +12,7 @@ import {
   Settings,
   LogOut,
   Sparkles,
+  Factory,
 } from "lucide-react";
 
 import { NavLink, useNavigate } from "react-router-dom";
@@ -24,6 +25,7 @@ function Sidebar() {
     { title: "Sales", path: "/sales", icon: ShoppingCart },
     { title: "Purchases", path: "/purchases", icon: Package },
     { title: "Stock", path: "/stock", icon: Warehouse },
+    { title: "Production", path: "/production", icon: Factory },
     { title: "Suppliers", path: "/suppliers", icon: Truck },
     { title: "Buyers", path: "/buyers", icon: Users },
     { title: "Receivables", path: "/receivables", icon: ArrowDownToLine },
