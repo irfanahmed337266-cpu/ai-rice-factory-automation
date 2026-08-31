@@ -50,13 +50,39 @@ def create_purchase_action(
 
     try:
 
-        # ----------------------------------------------------
+                # ----------------------------------------------------
         # FIND SUPPLIER
         # ----------------------------------------------------
 
-        supplier = db.query(Supplier).filter(
-            Supplier.name.ilike(supplier_name)
-        ).first()
+        supplier = None
+
+        supplier_text = str(supplier_name).strip()
+
+        supplier_id = None
+
+        if supplier_text.isdigit():
+
+            supplier_id = int(supplier_text)
+
+        elif supplier_text.lower().startswith("supplier "):
+
+            possible_id = supplier_text.split(" ", 1)[1].strip()
+
+            if possible_id.isdigit():
+
+                supplier_id = int(possible_id)
+
+        if supplier_id is not None:
+
+            supplier = db.query(Supplier).filter(
+                Supplier.id == supplier_id
+            ).first()
+
+        if not supplier:
+
+            supplier = db.query(Supplier).filter(
+                Supplier.name.ilike(supplier_text)
+            ).first()
 
         if not supplier:
 
@@ -64,17 +90,43 @@ def create_purchase_action(
                 "success": False,
                 "message": (
                     f"Supplier '{supplier_name}' "
-                    "database میں نہیں ملا۔"
+                    "database mein nahi mila."
                 )
             }
 
-        # ----------------------------------------------------
+                # ----------------------------------------------------
         # FIND MATERIAL
         # ----------------------------------------------------
 
-        material = db.query(Material).filter(
-            Material.name.ilike(material_name)
-        ).first()
+        material = None
+
+        material_text = str(material_name).strip()
+
+        material_id = None
+
+        if material_text.isdigit():
+
+            material_id = int(material_text)
+
+        elif material_text.lower().startswith("material "):
+
+            possible_id = material_text.split(" ", 1)[1].strip()
+
+            if possible_id.isdigit():
+
+                material_id = int(possible_id)
+
+        if material_id is not None:
+
+            material = db.query(Material).filter(
+                Material.id == material_id
+            ).first()
+
+        if not material:
+
+            material = db.query(Material).filter(
+                Material.name.ilike(material_text)
+            ).first()
 
         if not material:
 
@@ -82,7 +134,7 @@ def create_purchase_action(
                 "success": False,
                 "message": (
                     f"Material '{material_name}' "
-                    "database میں نہیں ملا۔"
+                    "database mein nahi mila."
                 )
             }
 
@@ -378,9 +430,35 @@ def create_sale_action(
         # FIND BUYER
         # ----------------------------------------------------
 
-        buyer = db.query(Buyer).filter(
-            Buyer.name.ilike(buyer_name)
-        ).first()
+        buyer = None
+
+        buyer_text = str(buyer_name).strip()
+
+        buyer_id = None
+
+        if buyer_text.isdigit():
+
+            buyer_id = int(buyer_text)
+
+        elif buyer_text.lower().startswith("buyer "):
+
+            possible_id = buyer_text.split(" ", 1)[1].strip()
+
+            if possible_id.isdigit():
+
+                buyer_id = int(possible_id)
+
+        if buyer_id is not None:
+
+            buyer = db.query(Buyer).filter(
+                Buyer.id == buyer_id
+            ).first()
+
+        if not buyer:
+
+            buyer = db.query(Buyer).filter(
+                Buyer.name.ilike(buyer_text)
+            ).first()
 
         if not buyer:
 
@@ -388,28 +466,46 @@ def create_sale_action(
                 "success": False,
                 "message": (
                     f"Buyer '{buyer_name}' "
-                    "database میں نہیں ملا۔"
+                    "database mein nahi mila."
                 )
             }
-
         # ----------------------------------------------------
         # FIND FINISHED PRODUCT
         # ----------------------------------------------------
 
-        product = db.query(Product).filter(
-            Product.name.ilike(product_name)
-        ).first()
+        product = None
+
+        product_text = str(product_name).strip()
+
+        product_id = None
+
+        if product_text.isdigit():
+            product_id = int(product_text)
+
+        elif product_text.lower().startswith("product "):
+            possible_id = product_text.split(" ", 1)[1].strip()
+
+            if possible_id.isdigit():
+                product_id = int(possible_id)
+
+        if product_id is not None:
+           product = db.query(Product).filter(
+                Product.id == product_id
+            ).first()
 
         if not product:
+            product = db.query(Product).filter(
+                Product.name.ilike(product_text)
+            ).first()
 
+        if not product:
             return {
                 "success": False,
                 "message": (
                     f"Finished product '{product_name}' "
-                    "database میں نہیں ملا۔"
+                    "database mein nahi mila."
                 )
             }
-
         # ----------------------------------------------------
         # VALIDATE QUANTITY
         # ----------------------------------------------------
